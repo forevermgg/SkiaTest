@@ -19,22 +19,22 @@ struct RenderEngineCreationArgs {
 };
 
 struct RenderEngineCreationArgs::Builder {
-    Builder() {}
+  Builder() {}
 
-    Builder& setPixelFormat(int pixelFormat) {
-        this->pixelFormat = pixelFormat;
-        return *this;
-    }
-    Builder& setImageCacheSize(uint32_t imageCacheSize) {
-        this->imageCacheSize = imageCacheSize;
-        return *this;
-    }
-    RenderEngineCreationArgs build() const {
-        return RenderEngineCreationArgs(pixelFormat, imageCacheSize);
-    }
+  Builder& setPixelFormat(int pixelFormat) {
+    this->pixelFormat = pixelFormat;
+    return *this;
+  }
+  Builder& setImageCacheSize(uint32_t imageCacheSize) {
+    this->imageCacheSize = imageCacheSize;
+    return *this;
+  }
+  RenderEngineCreationArgs build() const {
+    return RenderEngineCreationArgs(pixelFormat, imageCacheSize);
+  }
 
-private:
-    // 1 means RGBA_8888
-    int pixelFormat = 1;
-    uint32_t imageCacheSize = 0;
+ private:
+  // 1 means RGBA_8888
+  int pixelFormat = 1;
+  uint32_t imageCacheSize = 0;
 };

@@ -4,15 +4,17 @@
 #include "TestData.h"
 #include "renderengine/RenderEngineCreationArgs.h"
 #include "renderengine/DisplaySettings.h"
+#include "utils/Errors.h"
+#include "common/types.h"
 #include <jni.h>
-
-static void finalize_mixed(jlong ptr) {
-  delete reinterpret_cast<TestData *>(ptr);
-}
 
 TestData::TestData() {}
 
 TestData::~TestData() {}
+
+static void finalize_mixed(jlong ptr) {
+  delete reinterpret_cast<TestData *>(ptr);
+}
 
 extern "C" JNIEXPORT jlong JNICALL
 Java_com_mgg_skiatest_TestData__1nGetFinalizer(JNIEnv *env, jclass clazz) {

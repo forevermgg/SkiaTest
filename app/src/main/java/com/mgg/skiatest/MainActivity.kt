@@ -18,5 +18,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun testData() {
         TestData.makeEmpty()
+        CheckEglEnvironment.makeEmpty().checkSupportEgl()
     }
 }
