@@ -9,6 +9,8 @@ add_library( # Sets the name of the library.
         SHARED
         checkenv/CheckEglEnvironment.h
         checkenv/CheckEglEnvironment.cc
+        checkenv/ExtensionSet.h
+        checkenv/ExtensionSet.cc
         common/types.h
         impl/managed.cc
         renderengine/DisplaySettings.h

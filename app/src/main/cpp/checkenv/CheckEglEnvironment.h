@@ -6,12 +6,11 @@
 #define SKIA_TEST_CHECK_EGL_ENVIRONMENT_H
 
 class CheckEglEnvironment {
-public:
+ public:
   CheckEglEnvironment();
   ~CheckEglEnvironment();
   bool CheckSupportEgl();
   bool CheckSupportGLExtensions();
 };
 
-
-#endif //SKIA_TEST_CHECK_EGL_ENVIRONMENT_H
+#endif  // SKIA_TEST_CHECK_EGL_ENVIRONMENT_H

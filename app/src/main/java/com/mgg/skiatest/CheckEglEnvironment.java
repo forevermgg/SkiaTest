@@ -28,6 +28,10 @@ public class CheckEglEnvironment extends Managed {
         return _nCheckSupportGLExtensions(_ptr);
     }
 
+    public String getEglVersion() {
+        return "";
+    }
+
     public static class _FinalizerHolder {
         public static final long PTR = _nGetFinalizer();
     }
