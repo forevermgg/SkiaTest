@@ -10,6 +10,7 @@ public:
   CheckEglEnvironment();
   ~CheckEglEnvironment();
   bool CheckSupportEgl();
+  bool CheckSupportGLExtensions();
 };
 
 

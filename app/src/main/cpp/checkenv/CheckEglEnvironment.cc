@@ -20,6 +20,25 @@ bool CheckEglEnvironment::CheckSupportEgl() {
   return true;
 }
 
+bool CheckEglEnvironment::CheckSupportGLExtensions() {
+  // initialize EGL for the default display
+  EGLDisplay display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+  if (!eglInitialize(display, nullptr, nullptr)) {
+    return false;
+  }
+
+  const auto eglVersion = eglQueryString(display, EGL_VERSION);
+  if (!eglVersion) {
+    return false;
+  }
+
+  const auto eglExtensions = eglQueryString(display, EGL_EXTENSIONS);
+  if (!eglExtensions) {
+    return false;
+  }
+  return true;
+}
+
 static void finalize_mixed(jlong ptr) {
   delete reinterpret_cast<CheckEglEnvironment *>(ptr);
 }
@@ -41,4 +60,12 @@ JNIEXPORT jboolean JNICALL
 Java_com_mgg_skiatest_CheckEglEnvironment__1nCheckSupportEgl(JNIEnv *env, jclass clazz, jlong ptr) {
   CheckEglEnvironment* instance = reinterpret_cast<CheckEglEnvironment*>(static_cast<uintptr_t>(ptr));
   return instance->CheckSupportEgl();
+}
+
+extern "C"
+JNIEXPORT jboolean JNICALL
+Java_com_mgg_skiatest_CheckEglEnvironment__1nCheckSupportGLExtensions(JNIEnv *env, jclass clazz,
+                                                                      jlong ptr) {
+  CheckEglEnvironment* instance = reinterpret_cast<CheckEglEnvironment*>(static_cast<uintptr_t>(ptr));
+  return instance->CheckSupportGLExtensions();
 }

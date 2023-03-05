@@ -3,6 +3,7 @@ package com.mgg.skiatest
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.mgg.skiatest.databinding.ActivityMainBinding
+import com.mgg.skiatest.java.impl.Log
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,6 +19,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun testData() {
         TestData.makeEmpty()
-        CheckEglEnvironment.makeEmpty().checkSupportEgl()
+        val test = CheckEglEnvironment.makeEmpty()
+        test.checkSupportEgl()
+        test.checkSupportGLExtensions()
+        Log.error("checkSupportEgl:${test.checkSupportEgl()}")
+        Log.error("checkSupportGLExtensions:${test.checkSupportGLExtensions()}")
     }
 }

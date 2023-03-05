@@ -23,6 +23,11 @@ public class CheckEglEnvironment extends Managed {
         return _nCheckSupportEgl(_ptr);
     }
 
+    public boolean checkSupportGLExtensions() {
+        Stats.onNativeCall();
+        return _nCheckSupportGLExtensions(_ptr);
+    }
+
     public static class _FinalizerHolder {
         public static final long PTR = _nGetFinalizer();
     }
@@ -32,4 +37,5 @@ public class CheckEglEnvironment extends Managed {
     public static native long _nMakeEmpty();
 
     public static native boolean _nCheckSupportEgl(long ptr);
+    public static native boolean _nCheckSupportGLExtensions(long ptr);
 }
