@@ -6,9 +6,9 @@
 #define SKIATEST_TESTDATA_H
 
 class TestData {
-public:
+ public:
   TestData();
   ~TestData();
 };
 
-#endif //SKIATEST_TESTDATA_H
+#endif  // SKIATEST_TESTDATA_H
