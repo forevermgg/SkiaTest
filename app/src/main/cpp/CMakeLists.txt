@@ -1,6 +1,14 @@
+#最低版本
 cmake_minimum_required(VERSION 3.22.1)
 
+#项目信息
 project("skiatest")
+
+#头文件目录
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/skia/libs/include)
+LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/skia/libs/${ANDROID_ABI})
+
+message("ANDROID_ABI : ${ANDROID_ABI}")
 
 add_library( # Sets the name of the library.
         skiatest
@@ -20,7 +28,11 @@ add_library( # Sets the name of the library.
         TestData.h
         TestData.cc
         native-lib.cpp)
+# add_library(mxnet STATIC IMPORTED)
+# set_property(TARGET mxnet PROPERTY IMPORTED_LOCATION /path/to/libmxnet.a)
+# target_link_libraries(project_name mxnet ) #添加libmxnet.a
 
+#添加链接库
 target_link_libraries( # Specifies the target library.
         skiatest
         EGL
@@ -31,4 +43,24 @@ target_link_libraries( # Specifies the target library.
         atomic
         jnigraphics
         nativewindow
-        log)
+        log
+        libcpu-features.a
+        libdng_sdk.a
+        libexpat.a
+        libfreetype2.a
+        libharfbuzz.a
+        libicu.a
+        libjpeg.a
+        libparticles.a
+        libpiex.a
+        libpng.a
+        libskia.a
+        libskottie.a
+        libskparagraph.a
+        libskresources.a
+        libsksg.a
+        libskshaper.a
+        libsvg.a
+        libwebp.a
+        libwebp_sse41.a
+        libzlib.a)
