@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.22.1)
 project("skiatest")
 
 #头文件目录
-INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/skia/libs/include)
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/skia/libs)
 LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/skia/libs/${ANDROID_ABI})
 
 message("ANDROID_ABI : ${ANDROID_ABI}")
@@ -15,6 +15,7 @@ add_library( # Sets the name of the library.
 
         # Sets the library as a shared library.
         SHARED
+        android_debug.h
         checkenv/CheckEglEnvironment.h
         checkenv/CheckEglEnvironment.cc
         checkenv/ExtensionSet.h
@@ -25,9 +26,16 @@ add_library( # Sets the name of the library.
         renderengine/RenderEngineCreationArgs.h
         renderengine/SkiaGLRenderEngineStatic.cpp
         utils/Errors.h
+        ColorMode.h
+        EglManager.h
+        EglManager.cc
+        Frame.h
+        Frame.cc
         TestData.h
         TestData.cc
-        native-lib.cpp)
+        native-lib.cpp
+        Result.h
+        )
 # add_library(mxnet STATIC IMPORTED)
 # set_property(TARGET mxnet PROPERTY IMPORTED_LOCATION /path/to/libmxnet.a)
 # target_link_libraries(project_name mxnet ) #添加libmxnet.a

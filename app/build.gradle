@@ -6,7 +6,7 @@ plugins {
 android {
     namespace 'com.mgg.skiatest'
     compileSdk 33
-
+    ndkVersion '25.1.8937393'
     defaultConfig {
         applicationId "com.mgg.skiatest"
         minSdk 26

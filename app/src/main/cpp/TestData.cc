@@ -2,15 +2,23 @@
 // Created by centforever on 2023/3/5.
 //
 #include "TestData.h"
-#include "renderengine/RenderEngineCreationArgs.h"
-#include "renderengine/DisplaySettings.h"
-#include "utils/Errors.h"
-#include "common/types.h"
+
 #include <jni.h>
+#include <memory>
+#include "common/types.h"
+#include "renderengine/DisplaySettings.h"
+#include "renderengine/RenderEngineCreationArgs.h"
+#include "utils/Errors.h"
 
-TestData::TestData() {}
+TestData::TestData() {
+  eglManager = std::make_unique<EglManager>();
+  eglManager->initialize();
+}
 
-TestData::~TestData() {}
+TestData::~TestData() {
+  eglManager->destroy();
+  eglManager = nullptr;
+}
 
 static void finalize_mixed(jlong ptr) {
   delete reinterpret_cast<TestData *>(ptr);
