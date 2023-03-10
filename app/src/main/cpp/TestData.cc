@@ -9,6 +9,7 @@
 #include "renderengine/DisplaySettings.h"
 #include "renderengine/RenderEngineCreationArgs.h"
 #include "utils/Errors.h"
+#include "utils/Timing.h"
 
 TestData::TestData() {
   eglManager = std::make_unique<EglManager>();

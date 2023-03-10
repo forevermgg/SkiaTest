@@ -26,6 +26,8 @@ add_library( # Sets the name of the library.
         renderengine/RenderEngineCreationArgs.h
         renderengine/SkiaGLRenderEngineStatic.cpp
         utils/Errors.h
+        utils/Timing.h
+        utils/Macros.h
         ColorMode.h
         EglManager.h
         EglManager.cc
