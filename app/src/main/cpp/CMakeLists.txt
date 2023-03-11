@@ -35,6 +35,8 @@ add_library( # Sets the name of the library.
         EglManager.cc
         Frame.h
         Frame.cc
+        NativeChoreographer.h
+        NativeChoreographer.cc
         TestData.h
         TestData.cc
         native-lib.cpp

@@ -5,18 +5,18 @@
 
 #include <jni.h>
 
-#include <memory>
 #include <array>
 #include <condition_variable>
+#include <memory>
 #include <set>
 #include <thread>
 
+#include "CommonPool.h"
 #include "common/types.h"
 #include "renderengine/DisplaySettings.h"
 #include "renderengine/RenderEngineCreationArgs.h"
 #include "utils/Errors.h"
 #include "utils/Timing.h"
-#include "CommonPool.h"
 
 TestData::TestData() {
   eglManager = std::make_unique<EglManager>();
@@ -34,11 +34,11 @@ TestData::TestData() {
   std::array<std::future<pid_t>, 64> futures;
   for (int i = 0; i < futures.size(); i++) {
     futures[i] = CommonPool::async([] {
-        usleep(10);
-        return gettid();
+      usleep(10);
+      return gettid();
     });
   }
-  for (auto& f : futures) {
+  for (auto &f : futures) {
     threads.insert(f.get());
   }
   LOGD("threads.size(): %d", threads.size());
