@@ -29,6 +29,7 @@ open class MainActivity : AppCompatActivity() {
             }
         }, 0, 100)
         // 0 means no delay before the timer starts; 5 means repeat every 5 milliseconds
+        binding.sampleText.setText(getAbiString())
     }
 
     private fun testData() {
@@ -52,7 +53,14 @@ open class MainActivity : AppCompatActivity() {
         nativeChoreographer?.onPause()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        fAnimationTimer?.cancel()
+        fAnimationTimer = null
+    }
+
     fun updateFPS(fFPS: Float) {
         this.runOnUiThread { binding.sampleText.text = String.format("%2.2f FPS", fFPS) }
     }
+    private external fun getAbiString() : String
 }
