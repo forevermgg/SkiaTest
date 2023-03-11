@@ -37,6 +37,7 @@ add_library( # Sets the name of the library.
         Frame.cc
         NativeChoreographer.h
         NativeChoreographer.cc
+        SkiaDrawView.cc
         TestData.h
         TestData.cc
         native-lib.cpp

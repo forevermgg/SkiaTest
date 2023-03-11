@@ -6,18 +6,29 @@ import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import com.mgg.skiatest.databinding.ActivityMainBinding
 import com.mgg.skiatest.java.impl.Log
+import java.util.*
 
 open class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private var testData: TestData ? = null
     private var nativeChoreographer: NativeChoreographer ? = null
+    private var fAnimationTimer: Timer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         testData()
+        // Set a timer that will periodically request an update of the SkiaDrawView
+        fAnimationTimer = Timer()
+        fAnimationTimer?.schedule(object : TimerTask() {
+            override fun run() {
+                // This will request an update of the SkiaDrawView, even from other threads
+                binding.mSkiaDrawView.postInvalidate()
+            }
+        }, 0, 100)
+        // 0 means no delay before the timer starts; 5 means repeat every 5 milliseconds
     }
 
     private fun testData() {
