@@ -181,7 +181,7 @@ Java_com_mgg_skiatest_NativeChoreographer__1nMakeEmpty(
 extern "C" JNIEXPORT void JNICALL
 Java_com_mgg_skiatest_NativeChoreographer_nativeChoreographerCallback(
     JNIEnv *env, jobject thiz, jlong frame_time_namos, jlong native_ptr) {
-  NativeChoreographer *instance = reinterpret_cast<NativeChoreographer *>(
+  auto *instance = reinterpret_cast<NativeChoreographer *>(
       static_cast<uintptr_t>(native_ptr));
   return instance->SyncChoreographerInCallback(frame_time_namos);
 }
