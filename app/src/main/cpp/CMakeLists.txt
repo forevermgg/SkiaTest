@@ -6,10 +6,12 @@ project("skiatest")
 
 #头文件目录
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/skia/libs)
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/skia/src)
 LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/skia/libs/${ANDROID_ABI})
 
 message("ANDROID_ABI : ${ANDROID_ABI}")
-
+set(SK_GL=1)
+add_definitions(-DSK_GL=1)
 add_library( # Sets the name of the library.
         skiatest
 
@@ -18,6 +20,7 @@ add_library( # Sets the name of the library.
         android_debug.h
         CommonPool.h
         CommonPool.cc
+        DisplayParams.h
         checkenv/CheckEglEnvironment.h
         checkenv/CheckEglEnvironment.cc
         checkenv/ExtensionSet.h
@@ -37,6 +40,10 @@ add_library( # Sets the name of the library.
         exception_helper.cpp
         Frame.h
         Frame.cc
+        GLWindowContext.h
+        GLWindowContext.cc
+        GLWindowContext_android.cpp
+        load_library.cc
         NativeChoreographer.h
         NativeChoreographer.cc
         SkiaDrawView.cc
@@ -44,6 +51,8 @@ add_library( # Sets the name of the library.
         TestData.cc
         native-lib.cpp
         Result.h
+        WindowContext.h
+        WindowContext.cc
         )
 # add_library(mxnet STATIC IMPORTED)
 # set_property(TARGET mxnet PROPERTY IMPORTED_LOCATION /path/to/libmxnet.a)
