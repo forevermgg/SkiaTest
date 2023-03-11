@@ -67,6 +67,7 @@ const char* EglManager::eglErrorString() {
 static struct {
   bool bufferAge = false;
   bool setDamage = false;
+  bool partialReDrawSupported = false;
   bool noConfigContext = false;
   bool pixelFormatFloat = false;
   bool glColorSpace = false;
@@ -277,10 +278,19 @@ void EglManager::initExtensions() {
   EglExtensions.bufferAge = extensions.has("EGL_EXT_buffer_age") ||
                             extensions.has("EGL_KHR_partial_update");
   EglExtensions.setDamage = extensions.has("EGL_KHR_partial_update");
+  PFNEGLSWAPBUFFERSWITHDAMAGEEXTPROC swapBuffersWithDamage = nullptr;
   if (!extensions.has("EGL_KHR_swap_buffers_with_damage")) {
+    swapBuffersWithDamage = reinterpret_cast<PFNEGLSWAPBUFFERSWITHDAMAGEEXTPROC>(
+            eglGetProcAddress("eglSwapBuffersWithDamageKHR"));
     LOGE("Missing required extension EGL_KHR_swap_buffers_with_damage");
+  } else if (!extensions.has("EGL_EXT_swap_buffers_with_damage")) {
+    swapBuffersWithDamage = reinterpret_cast<PFNEGLSWAPBUFFERSWITHDAMAGEEXTPROC>(
+            eglGetProcAddress("eglSwapBuffersWithDamageEXT"));
+    LOGE("Missing required extension EGL_EXT_swap_buffers_with_damage");
   }
-
+  EglExtensions.partialReDrawSupported = EglExtensions.bufferAge
+          && EglExtensions.setDamage
+          && swapBuffersWithDamage != nullptr;
   EglExtensions.glColorSpace = extensions.has("EGL_KHR_gl_colorspace");
   EglExtensions.noConfigContext = extensions.has("EGL_KHR_no_config_context");
   EglExtensions.pixelFormatFloat = extensions.has("EGL_EXT_pixel_format_float");
