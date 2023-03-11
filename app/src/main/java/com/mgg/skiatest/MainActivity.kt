@@ -29,7 +29,8 @@ open class MainActivity : AppCompatActivity() {
             }
         }, 0, 100)
         // 0 means no delay before the timer starts; 5 means repeat every 5 milliseconds
-        binding.sampleText.setText(getAbiString())
+        binding.sampleText.text = getAbiString()
+        throwsException()
     }
 
     private fun testData() {
@@ -63,4 +64,6 @@ open class MainActivity : AppCompatActivity() {
         this.runOnUiThread { binding.sampleText.text = String.format("%2.2f FPS", fFPS) }
     }
     private external fun getAbiString() : String
+
+    private external fun throwsException()
 }

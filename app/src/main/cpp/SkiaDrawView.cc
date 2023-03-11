@@ -1,12 +1,11 @@
+#include <android/bitmap.h>
 #include <jni.h>
 #include <math.h>
-#include <jni.h>
-#include <android/bitmap.h>
 
 #include "include/core/SkCanvas.h"
 #include "include/core/SkGraphics.h"
-#include "include/core/SkSurface.h"
 #include "include/core/SkString.h"
+#include "include/core/SkSurface.h"
 #include "include/core/SkTime.h"
 
 extern "C" JNIEXPORT void JNICALL

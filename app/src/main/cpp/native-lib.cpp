@@ -2,6 +2,10 @@
 
 #include <string>
 
+#include "exception_helper.h"
+
+void might_throw() { throw std::runtime_error("A C++ runtime_error"); }
+
 extern "C" JNIEXPORT jstring JNICALL
 Java_com_mgg_skiatest_MainActivity_getAbiString(JNIEnv *env, jobject thiz) {
 #if defined(__arm__)
@@ -36,6 +40,20 @@ Java_com_mgg_skiatest_MainActivity_getAbiString(JNIEnv *env, jobject thiz) {
 #define ABI "unknown"
 #endif
 
-  return (*env).NewStringUTF("Hello from JNI !  "
-                             "Compiled with ABI " ABI ".");
+  return (*env).NewStringUTF(
+      "Hello from JNI !  "
+      "Compiled with ABI " ABI ".");
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_com_mgg_skiatest_MainActivity_throwsException(JNIEnv *env, jobject thiz) {
+  try {
+    might_throw();
+  } catch (std::exception &e) {
+    // jniThrowRuntimeException(env, e.what());
+  } catch (...) {
+    // We don't want any C++ exceptions to cross the JNI boundary, so include a
+    // catch-all.
+    // jniThrowRuntimeException(env, "Catch-all");
+  }
 }

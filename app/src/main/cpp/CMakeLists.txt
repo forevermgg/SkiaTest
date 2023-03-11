@@ -33,6 +33,8 @@ add_library( # Sets the name of the library.
         ColorMode.h
         EglManager.h
         EglManager.cc
+        exception_helper.h
+        exception_helper.cpp
         Frame.h
         Frame.cc
         NativeChoreographer.h
