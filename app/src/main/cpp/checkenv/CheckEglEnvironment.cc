@@ -16,6 +16,9 @@ bool CheckEglEnvironment::CheckSupportEgl() {
   if (!eglInitialize(display, nullptr, nullptr)) {
     return false;
   }
+  eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+  eglTerminate(display);
+  display = EGL_NO_DISPLAY;
   return true;
 }
 
@@ -35,6 +38,9 @@ bool CheckEglEnvironment::CheckSupportGLExtensions() {
   if (!eglExtensions) {
     return false;
   }
+  eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+  eglTerminate(display);
+  display = EGL_NO_DISPLAY;
   return true;
 }
 

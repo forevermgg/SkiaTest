@@ -16,6 +16,8 @@ add_library( # Sets the name of the library.
         # Sets the library as a shared library.
         SHARED
         android_debug.h
+        CommonPool.h
+        CommonPool.cc
         checkenv/CheckEglEnvironment.h
         checkenv/CheckEglEnvironment.cc
         checkenv/ExtensionSet.h

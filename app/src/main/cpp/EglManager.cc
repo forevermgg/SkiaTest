@@ -161,21 +161,13 @@ EGLConfig EglManager::load8BitsConfig(EGLDisplay display,
   EGLint eglSwapBehavior = (swapBehavior == SwapBehavior::Preserved)
                                ? EGL_SWAP_BEHAVIOR_PRESERVED_BIT
                                : 0;
-  EGLint attribs[] = {
-      EGL_RENDERABLE_TYPE,
-      EGL_OPENGL_ES2_BIT,
-      EGL_RED_SIZE, 8,
-      EGL_GREEN_SIZE,8,
-      EGL_BLUE_SIZE, 8,
-      EGL_ALPHA_SIZE, 8,
-      EGL_DEPTH_SIZE, 0,
-      EGL_CONFIG_CAVEAT,
-      EGL_NONE,
-      // EGL_STENCIL_SIZE,
-      // STENCIL_BUFFER_SIZE,
-      EGL_SURFACE_TYPE,
-      EGL_WINDOW_BIT | eglSwapBehavior,
-      EGL_NONE};
+  EGLint attribs[] = {EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT, EGL_RED_SIZE, 8,
+                      EGL_GREEN_SIZE, 8, EGL_BLUE_SIZE, 8, EGL_ALPHA_SIZE, 8,
+                      EGL_DEPTH_SIZE, 0, EGL_CONFIG_CAVEAT, EGL_NONE,
+                      // EGL_STENCIL_SIZE,
+                      // STENCIL_BUFFER_SIZE,
+                      EGL_SURFACE_TYPE, EGL_WINDOW_BIT | eglSwapBehavior,
+                      EGL_NONE};
   EGLConfig config = EGL_NO_CONFIG_KHR;
   EGLint numConfigs = 1;
   if (!eglChooseConfig(display, attribs, &config, numConfigs, &numConfigs) ||
@@ -191,18 +183,12 @@ EGLConfig EglManager::load1010102Config(EGLDisplay display,
                                ? EGL_SWAP_BEHAVIOR_PRESERVED_BIT
                                : 0;
   // If we reached this point, we have a valid swap behavior
-  EGLint attribs[] = {EGL_RENDERABLE_TYPE,
-                      EGL_OPENGL_ES2_BIT,
-                      EGL_RED_SIZE, 10,
-                      EGL_GREEN_SIZE, 10,
-                      EGL_BLUE_SIZE, 10,
-                      EGL_ALPHA_SIZE, 2,
-                      EGL_DEPTH_SIZE, 0,
-                      // EGL_STENCIL_SIZE,
-                      // STENCIL_BUFFER_SIZE,
-                      EGL_SURFACE_TYPE,
-                      EGL_WINDOW_BIT | eglSwapBehavior,
-                      EGL_NONE};
+  EGLint attribs[] = {
+      EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT, EGL_RED_SIZE, 10, EGL_GREEN_SIZE,
+      10, EGL_BLUE_SIZE, 10, EGL_ALPHA_SIZE, 2, EGL_DEPTH_SIZE, 0,
+      // EGL_STENCIL_SIZE,
+      // STENCIL_BUFFER_SIZE,
+      EGL_SURFACE_TYPE, EGL_WINDOW_BIT | eglSwapBehavior, EGL_NONE};
   EGLConfig config = EGL_NO_CONFIG_KHR;
   EGLint numConfigs = 1;
   if (!eglChooseConfig(display, attribs, &config, numConfigs, &numConfigs) ||
@@ -219,20 +205,12 @@ EGLConfig EglManager::loadFP16Config(EGLDisplay display,
                                : 0;
   // If we reached this point, we have a valid swap behavior
   EGLint attribs[] = {
-      EGL_RENDERABLE_TYPE,
-      EGL_OPENGL_ES2_BIT,
-      EGL_COLOR_COMPONENT_TYPE_EXT,
-      EGL_COLOR_COMPONENT_TYPE_FLOAT_EXT,
-      EGL_RED_SIZE, 16,
-      EGL_GREEN_SIZE, 16,
-      EGL_BLUE_SIZE, 16,
-      EGL_ALPHA_SIZE, 16,
-      EGL_DEPTH_SIZE, 0,
+      EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT, EGL_COLOR_COMPONENT_TYPE_EXT,
+      EGL_COLOR_COMPONENT_TYPE_FLOAT_EXT, EGL_RED_SIZE, 16, EGL_GREEN_SIZE, 16,
+      EGL_BLUE_SIZE, 16, EGL_ALPHA_SIZE, 16, EGL_DEPTH_SIZE, 0,
       // EGL_STENCIL_SIZE,
       // STENCIL_BUFFER_SIZE,
-      EGL_SURFACE_TYPE,
-      EGL_WINDOW_BIT | eglSwapBehavior,
-      EGL_NONE};
+      EGL_SURFACE_TYPE, EGL_WINDOW_BIT | eglSwapBehavior, EGL_NONE};
   EGLConfig config = EGL_NO_CONFIG_KHR;
   EGLint numConfigs = 1;
   if (!eglChooseConfig(display, attribs, &config, numConfigs, &numConfigs) ||
@@ -362,11 +340,6 @@ void EglManager::createContext() {
   contextAttributes.reserve(5);
   contextAttributes.push_back(EGL_CONTEXT_CLIENT_VERSION);
   contextAttributes.push_back(GLES_VERSION);
-  int contextPriority = 1;
-  if (contextPriority != 0 && EglExtensions.contextPriority) {
-    contextAttributes.push_back(EGL_CONTEXT_PRIORITY_LEVEL_IMG);
-    contextAttributes.push_back(contextPriority);
-  }
   contextAttributes.push_back(EGL_NONE);
   mEglContext = eglCreateContext(
       mEglDisplay,
@@ -672,14 +645,14 @@ bool EglManager::setPreserveBuffer(EGLSurface surface, bool preserve) {
 }
 
 /*static status_t waitForeverOnFence(int fence, const char* logname) {
-  ATRACE_CALL();
+  // ATRACE_CALL();
   if (fence == -1) {
     return NO_ERROR;
   }
   constexpr int warningTimeout = 3000;
   int err = sync_wait(fence, warningTimeout);
   if (err < 0 && errno == ETIME) {
-    ALOGE("%s: fence %d didn't signal in %d ms", logname, fence,
+    LOGE("%s: fence %d didn't signal in %d ms", logname, fence,
           warningTimeout);
     err = sync_wait(fence, -1);
   }
@@ -688,7 +661,7 @@ bool EglManager::setPreserveBuffer(EGLSurface surface, bool preserve) {
 
 status_t EglManager::fenceWait(int fence) {
   if (!hasEglContext()) {
-    ALOGE("EglManager::fenceWait: EGLDisplay not initialized");
+    LOGE("EglManager::fenceWait: EGLDisplay not initialized");
     return INVALID_OPERATION;
   }
 
@@ -697,7 +670,7 @@ status_t EglManager::fenceWait(int fence) {
     // Create an EGLSyncKHR from the current fence.
     int fenceFd = ::dup(fence);
     if (fenceFd == -1) {
-      ALOGE("EglManager::fenceWait: error dup'ing fence fd: %d", errno);
+      LOGE("EglManager::fenceWait: error dup'ing fence fd: %d", errno);
       return -errno;
     }
     EGLint attribs[] = {EGL_SYNC_NATIVE_FENCE_FD_ANDROID, fenceFd, EGL_NONE};
@@ -705,7 +678,7 @@ status_t EglManager::fenceWait(int fence) {
         eglCreateSyncKHR(mEglDisplay, EGL_SYNC_NATIVE_FENCE_ANDROID, attribs);
     if (sync == EGL_NO_SYNC_KHR) {
       close(fenceFd);
-      ALOGE("EglManager::fenceWait: error creating EGL fence: %#x",
+      LOGE("EglManager::fenceWait: error creating EGL fence: %#x",
             eglGetError());
       return UNKNOWN_ERROR;
     }
@@ -717,14 +690,14 @@ status_t EglManager::fenceWait(int fence) {
     EGLint eglErr = eglGetError();
     eglDestroySyncKHR(mEglDisplay, sync);
     if (eglErr != EGL_SUCCESS) {
-      ALOGE("EglManager::fenceWait: error waiting for EGL fence: %#x", eglErr);
+      LOGE("EglManager::fenceWait: error waiting for EGL fence: %#x", eglErr);
       return UNKNOWN_ERROR;
     }
   } else {
     // Block CPU on the fence.
     status_t err = waitForeverOnFence(fence, "EglManager::fenceWait");
     if (err != NO_ERROR) {
-      ALOGE("EglManager::fenceWait: error waiting for fence: %d", err);
+      LOGE("EglManager::fenceWait: error waiting for fence: %d", err);
       return err;
     }
   }
@@ -735,7 +708,7 @@ status_t EglManager::createReleaseFence(bool useFenceSync, EGLSyncKHR* eglFence,
                                         int* nativeFence) {
   *nativeFence = -1;
   if (!hasEglContext()) {
-    ALOGE("EglManager::createReleaseFence: EGLDisplay not initialized");
+    LOGE("EglManager::createReleaseFence: EGLDisplay not initialized");
     return INVALID_OPERATION;
   }
 
@@ -743,7 +716,7 @@ status_t EglManager::createReleaseFence(bool useFenceSync, EGLSyncKHR* eglFence,
     EGLSyncKHR sync =
         eglCreateSyncKHR(mEglDisplay, EGL_SYNC_NATIVE_FENCE_ANDROID, nullptr);
     if (sync == EGL_NO_SYNC_KHR) {
-      ALOGE("EglManager::createReleaseFence: error creating EGL fence: %#x",
+      LOGE("EglManager::createReleaseFence: error creating EGL fence: %#x",
             eglGetError());
       return UNKNOWN_ERROR;
     }
@@ -751,7 +724,7 @@ status_t EglManager::createReleaseFence(bool useFenceSync, EGLSyncKHR* eglFence,
     int fenceFd = eglDupNativeFenceFDANDROID(mEglDisplay, sync);
     eglDestroySyncKHR(mEglDisplay, sync);
     if (fenceFd == EGL_NO_NATIVE_FENCE_FD_ANDROID) {
-      ALOGE(
+      LOGE(
           "EglManager::createReleaseFence: error dup'ing native fence "
           "fd: %#x",
           eglGetError());
@@ -768,13 +741,13 @@ status_t EglManager::createReleaseFence(bool useFenceSync, EGLSyncKHR* eglFence,
       EGLint result =
           eglClientWaitSyncKHR(mEglDisplay, *eglFence, 0, 1000000000);
       if (result == EGL_FALSE) {
-        ALOGE(
+        LOGE(
             "EglManager::createReleaseFence: error waiting for previous fence: "
             "%#x",
             eglGetError());
         return UNKNOWN_ERROR;
       } else if (result == EGL_TIMEOUT_EXPIRED_KHR) {
-        ALOGE(
+        LOGE(
             "EglManager::createReleaseFence: timeout waiting for previous "
             "fence");
         return TIMED_OUT;
@@ -786,7 +759,7 @@ status_t EglManager::createReleaseFence(bool useFenceSync, EGLSyncKHR* eglFence,
     // OpenGL ES context.
     *eglFence = eglCreateSyncKHR(mEglDisplay, EGL_SYNC_FENCE_KHR, nullptr);
     if (*eglFence == EGL_NO_SYNC_KHR) {
-      ALOGE("EglManager::createReleaseFence: error creating fence: %#x",
+      LOGE("EglManager::createReleaseFence: error creating fence: %#x",
             eglGetError());
       return UNKNOWN_ERROR;
     }
