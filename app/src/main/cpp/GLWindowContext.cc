@@ -2,6 +2,7 @@
 // Created by centforever on 2023/3/11.
 //
 
+#include <GLES/gl.h>
 #include "GLWindowContext.h"
 
 #include "include/core/SkCanvas.h"
@@ -10,6 +11,8 @@
 #include "include/gpu/GrDirectContext.h"
 #include "include/gpu/gl/GrGLTypes.h"
 #include "include/core/SkMatrix.h"
+#include "include/gpu/gl/GrGLDefines.h"
+
 
 GLWindowContext::GLWindowContext(const DisplayParams& params)
     : WindowContext(params), fBackendContext(nullptr), fSurface(nullptr) {
@@ -41,11 +44,10 @@ sk_sp<SkSurface> GLWindowContext::getBackbufferSurface() {
     // TODO(forevermeng)
     if (fContext) {
       GrGLint buffer;
-      /*GR_GL_CALL(fBackendContext.get(),
-                 GetIntegerv(GR_GL_FRAMEBUFFER_BINDING, &buffer));*/
+      fBackendContext.get()->fFunctions.fGetIntegerv(GR_GL_FRAMEBUFFER_BINDING, &buffer);
       GrGLFramebufferInfo fbInfo;
       fbInfo.fFBOID = buffer;
-      // fbInfo.fFormat = GR_GL_RGBA8;
+      fbInfo.fFormat = GR_GL_RGBA8;
       GrBackendRenderTarget backendRT(fWidth, fHeight, fSampleCount,
                                       fStencilBits, fbInfo);
       fSurface = SkSurface::MakeFromBackendRenderTarget(
