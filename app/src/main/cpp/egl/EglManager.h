@@ -7,11 +7,11 @@
 
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
-#include <include/core/SkRect.h>
+#include "include/core/SkRect.h"
 
-#include "ColorMode.h"
-#include "Frame.h"
-#include "Result.h"
+#include "../utils/ColorMode.h"
+#include "../Frame.h"
+#include "../utils/Result.h"
 #include "include/core/SkColorSpace.h"
 
 // This class contains the shared global EGL objects, such as EGLDisplay

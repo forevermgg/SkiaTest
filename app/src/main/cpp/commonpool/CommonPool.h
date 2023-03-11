@@ -8,8 +8,8 @@
 #include <mutex>
 #include <vector>
 
-#include "android_debug.h"
-#include "utils/Macros.h"
+#include "../debug/android_debug.h"
+#include "../utils/Macros.h"
 
 template <class T, int SIZE>
 class ArrayQueue {

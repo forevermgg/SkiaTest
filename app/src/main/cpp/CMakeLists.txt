@@ -17,9 +17,9 @@ add_library( # Sets the name of the library.
 
         # Sets the library as a shared library.
         SHARED
-        android_debug.h
-        CommonPool.h
-        CommonPool.cc
+        debug/android_debug.h
+        commonpool/CommonPool.h
+        commonpool/CommonPool.cc
         DisplayParams.h
         checkenv/CheckEglEnvironment.h
         checkenv/CheckEglEnvironment.cc
@@ -33,24 +33,24 @@ add_library( # Sets the name of the library.
         utils/Errors.h
         utils/Timing.h
         utils/Macros.h
-        ColorMode.h
-        EglManager.h
-        EglManager.cc
-        exception_helper.h
-        exception_helper.cpp
+        utils/ColorMode.h
+        egl/EglManager.h
+        egl/EglManager.cc
+        exception/exception_helper.h
+        exception/exception_helper.cpp
         Frame.h
         Frame.cc
         GLWindowContext.h
         GLWindowContext.cc
         GLWindowContext_android.cpp
         load_library.cc
-        NativeChoreographer.h
-        NativeChoreographer.cc
+        choreographer/NativeChoreographer.h
+        choreographer/NativeChoreographer.cc
         SkiaDrawView.cc
-        TestData.h
-        TestData.cc
+        test/TestData.h
+        test/TestData.cc
         native-lib.cpp
-        Result.h
+        utils/Result.h
         WindowContext.h
         WindowContext.cc
         )

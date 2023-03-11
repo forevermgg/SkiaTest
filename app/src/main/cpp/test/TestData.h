@@ -3,7 +3,7 @@
 //
 #include <memory>
 
-#include "EglManager.h"
+#include "../egl/EglManager.h"
 #ifndef SKIA_TEST_TESTDATA_H
 #define SKIA_TEST_TESTDATA_H
 

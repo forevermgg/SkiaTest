@@ -3,7 +3,7 @@
 
 #include <sys/time.h>
 
-#include "../android_debug.h"
+#include "../debug/android_debug.h"
 
 #define TIME_METHOD() MethodTimer __method_timer(__func__)
 class MethodTimer {

@@ -11,7 +11,7 @@
 
 #include <cassert>
 
-#include "android_debug.h"
+#include "../debug/android_debug.h"
 
 const int32_t kFPSThrottleInterval = 2;
 const int64_t kFPSThrottlePresentationInterval =
