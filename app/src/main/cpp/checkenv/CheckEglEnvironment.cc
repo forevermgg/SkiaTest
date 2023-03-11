@@ -1,6 +1,6 @@
 //
 // Created by centforever on 2023/3/5.
-//
+// https://www.jianshu.com/p/d5ff1ff4ee2a
 
 #include "CheckEglEnvironment.h"
 
