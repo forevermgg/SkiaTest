@@ -27,13 +27,11 @@
     <SurfaceView
         android:id="@+id/mSurfaceView"
         android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:background="@android:color/white"/>
+        android:layout_height="200dp"/>
 
     <ImageView
         android:id="@+id/mImageView"
         android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:background="@android:color/white"/>
+        android:layout_height="200dp" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

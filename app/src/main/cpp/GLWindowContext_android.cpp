@@ -1,133 +1,145 @@
 #include <EGL/egl.h>
 #include <GLES/gl.h>
-#include "include/gpu/gl/GrGLInterface.h"
+
+#include "DisplayParams.h"
 #include "GLWindowContext.h"
 #include "WindowContextFactory_android.h"
-#include "DisplayParams.h"
+#include "include/gpu/gl/GrGLInterface.h"
 
 namespace {
 class GLWindowContext_android : public GLWindowContext {
-public:
+ public:
+  GLWindowContext_android(ANativeWindow*, const DisplayParams&);
 
-    GLWindowContext_android(ANativeWindow*, const DisplayParams&);
+  ~GLWindowContext_android() override;
 
-    ~GLWindowContext_android() override;
+  void onSwapBuffers() override;
 
-    void onSwapBuffers() override;
+  sk_sp<const GrGLInterface> onInitializeContext() override;
+  void onDestroyContext() override;
 
-    sk_sp<const GrGLInterface> onInitializeContext() override;
-    void onDestroyContext() override;
+ private:
+  EGLDisplay fDisplay;
+  EGLContext fEGLContext;
+  EGLSurface fSurfaceAndroid;
 
-private:
+  // For setDisplayParams and resize which call onInitializeContext with null
+  // platformData
+  ANativeWindow* fNativeWindow = nullptr;
 
-    EGLDisplay fDisplay;
-    EGLContext fEGLContext;
-    EGLSurface fSurfaceAndroid;
-
-    // For setDisplayParams and resize which call onInitializeContext with null platformData
-    ANativeWindow* fNativeWindow = nullptr;
-
-    using INHERITED = GLWindowContext;
+  using INHERITED = GLWindowContext;
 };
 
 GLWindowContext_android::GLWindowContext_android(ANativeWindow* window,
                                                  const DisplayParams& params)
-    : INHERITED(params)
-    , fDisplay(EGL_NO_DISPLAY)
-    , fEGLContext(EGL_NO_CONTEXT)
-    , fSurfaceAndroid(EGL_NO_SURFACE)
-    , fNativeWindow(window) {
+    : INHERITED(params),
+      fDisplay(EGL_NO_DISPLAY),
+      fEGLContext(EGL_NO_CONTEXT),
+      fSurfaceAndroid(EGL_NO_SURFACE),
+      fNativeWindow(window) {
+  // any config code here (particularly for msaa)?
 
-    // any config code here (particularly for msaa)?
-
-    this->initializeContext();
+  this->initializeContext();
 }
 
-GLWindowContext_android::~GLWindowContext_android() {
-    this->destroyContext();
-}
+GLWindowContext_android::~GLWindowContext_android() { this->destroyContext(); }
 
 sk_sp<const GrGLInterface> GLWindowContext_android::onInitializeContext() {
-    fWidth = ANativeWindow_getWidth(fNativeWindow);
-    fHeight = ANativeWindow_getHeight(fNativeWindow);
+  fWidth = ANativeWindow_getWidth(fNativeWindow);
+  fHeight = ANativeWindow_getHeight(fNativeWindow);
 
-    fDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+  fDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 
-    EGLint majorVersion;
-    EGLint minorVersion;
-    eglInitialize(fDisplay, &majorVersion, &minorVersion);
+  EGLint majorVersion;
+  EGLint minorVersion;
+  eglInitialize(fDisplay, &majorVersion, &minorVersion);
 
-    SkAssertResult(eglBindAPI(EGL_OPENGL_ES_API));
+  SkAssertResult(eglBindAPI(EGL_OPENGL_ES_API));
 
-    EGLint numConfigs = 0;
-    EGLint eglSampleCnt = fDisplayParams.fMSAASampleCount > 1 ? fDisplayParams.fMSAASampleCount > 1
-                                                              : 0;
-    const EGLint configAttribs[] = {
-        EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-        EGL_RED_SIZE, 8,
-        EGL_GREEN_SIZE, 8,
-        EGL_BLUE_SIZE, 8,
-        EGL_ALPHA_SIZE, 8,
-        EGL_DEPTH_SIZE,      0,
-        EGL_STENCIL_SIZE, 8,
-        EGL_SAMPLE_BUFFERS, 1,
-        EGL_SAMPLES, 4,
-        EGL_NONE
-    };
+  EGLint numConfigs = 0;
+  EGLint eglSampleCnt = fDisplayParams.fMSAASampleCount > 1
+                            ? fDisplayParams.fMSAASampleCount > 1
+                            : 0;
+  const EGLint configAttribs[] = {EGL_SURFACE_TYPE,
+                                  EGL_WINDOW_BIT,
+                                  EGL_RENDERABLE_TYPE,
+                                  EGL_OPENGL_ES2_BIT,
+                                  EGL_RED_SIZE,
+                                  8,
+                                  EGL_GREEN_SIZE,
+                                  8,
+                                  EGL_BLUE_SIZE,
+                                  8,
+                                  EGL_ALPHA_SIZE,
+                                  8,
+                                  EGL_DEPTH_SIZE,
+                                  0,
+                                  EGL_STENCIL_SIZE,
+                                  8,
+                                  EGL_SAMPLE_BUFFERS,
+                                  1,
+                                  EGL_SAMPLES,
+                                  4,
+                                  EGL_NONE};
 
-    EGLConfig surfaceConfig;
-    SkAssertResult(eglChooseConfig(fDisplay, configAttribs, &surfaceConfig, 1, &numConfigs));
-    SkASSERT(numConfigs > 0);
+  EGLConfig surfaceConfig;
+  SkAssertResult(
+      eglChooseConfig(fDisplay, configAttribs, &surfaceConfig, 1, &numConfigs));
+  SkASSERT(numConfigs > 0);
 
-    static const EGLint kEGLContextAttribsForOpenGLES[] = {
-        EGL_CONTEXT_CLIENT_VERSION, 2,
-        EGL_NONE
-    };
-    fEGLContext = eglCreateContext(
-            fDisplay, surfaceConfig, EGL_NO_CONTEXT, kEGLContextAttribsForOpenGLES);
-    SkASSERT(EGL_NO_CONTEXT != fEGLContext);
+  static const EGLint kEGLContextAttribsForOpenGLES[] = {
+      EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE};
+  fEGLContext = eglCreateContext(fDisplay, surfaceConfig, EGL_NO_CONTEXT,
+                                 kEGLContextAttribsForOpenGLES);
+  SkASSERT(EGL_NO_CONTEXT != fEGLContext);
 
-    SkDebugf("EGL: %d.%d", majorVersion, minorVersion);
-    SkDebugf("Vendor: %s", eglQueryString(fDisplay, EGL_VENDOR));
-    SkDebugf("Extensions: %s", eglQueryString(fDisplay, EGL_EXTENSIONS));
-    const EGLint attribs[] = {EGL_NONE};
-    fSurfaceAndroid = eglCreateWindowSurface(fDisplay, surfaceConfig, fNativeWindow, attribs);
-    SkASSERT(EGL_NO_SURFACE != fSurfaceAndroid);
+  SkDebugf("EGL: %d.%d", majorVersion, minorVersion);
+  SkDebugf("Vendor: %s", eglQueryString(fDisplay, EGL_VENDOR));
+  SkDebugf("Extensions: %s", eglQueryString(fDisplay, EGL_EXTENSIONS));
+  const EGLint attribs[] = {EGL_NONE};
+  fSurfaceAndroid =
+      eglCreateWindowSurface(fDisplay, surfaceConfig, fNativeWindow, attribs);
+  SkASSERT(EGL_NO_SURFACE != fSurfaceAndroid);
 
-    SkAssertResult(eglMakeCurrent(fDisplay, fSurfaceAndroid, fSurfaceAndroid, fEGLContext));
-    // GLWindowContext::initializeContext will call GrGLMakeNativeInterface so we
-    // won't call it here.
+  SkAssertResult(
+      eglMakeCurrent(fDisplay, fSurfaceAndroid, fSurfaceAndroid, fEGLContext));
+  // GLWindowContext::initializeContext will call GrGLMakeNativeInterface so we
+  // won't call it here.
 
-    glClearStencil(0);
-    glClearColor(0, 0, 0, 0);
-    glStencilMask(0xffffffff);
-    glClear(GL_STENCIL_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+  // TODO(forevermeng)
+  /*glClearStencil(0);
+  glClearColor(95, 184, 120, 1.000);
+  glStencilMask(0xFFDC143C);*/
 
-    eglGetConfigAttrib(fDisplay, surfaceConfig, EGL_STENCIL_SIZE, &fStencilBits);
-    eglGetConfigAttrib(fDisplay, surfaceConfig, EGL_SAMPLES, &fSampleCount);
-    fSampleCount = std::max(fSampleCount, 1);
+  glClearStencil(0);
+  glClearColor(0, 0, 0, 0);
+  glStencilMask(0xffffffff);
+  glClear(GL_STENCIL_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-    eglSwapInterval(fDisplay, fDisplayParams.fDisableVsync ? 0 : 1);
+  eglGetConfigAttrib(fDisplay, surfaceConfig, EGL_STENCIL_SIZE, &fStencilBits);
+  eglGetConfigAttrib(fDisplay, surfaceConfig, EGL_SAMPLES, &fSampleCount);
+  fSampleCount = std::max(fSampleCount, 1);
 
-    return GrGLMakeNativeInterface();
+  eglSwapInterval(fDisplay, fDisplayParams.fDisableVsync ? 0 : 1);
+  // eglSwapBuffers(fDisplay, fSurfaceAndroid);
+  return GrGLMakeNativeInterface();
 }
 
 void GLWindowContext_android::onDestroyContext() {
-    if (!fDisplay || !fEGLContext || !fSurfaceAndroid) {
-        return;
-    }
-    eglMakeCurrent(fDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-    SkAssertResult(eglDestroySurface(fDisplay, fSurfaceAndroid));
-    SkAssertResult(eglDestroyContext(fDisplay, fEGLContext));
-    fEGLContext = EGL_NO_CONTEXT;
-    fSurfaceAndroid = EGL_NO_SURFACE;
+  if (!fDisplay || !fEGLContext || !fSurfaceAndroid) {
+    return;
+  }
+  eglMakeCurrent(fDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+  SkAssertResult(eglDestroySurface(fDisplay, fSurfaceAndroid));
+  SkAssertResult(eglDestroyContext(fDisplay, fEGLContext));
+  fEGLContext = EGL_NO_CONTEXT;
+  fSurfaceAndroid = EGL_NO_SURFACE;
 }
 
 void GLWindowContext_android::onSwapBuffers() {
-    if (fDisplay && fEGLContext && fSurfaceAndroid) {
-        eglSwapBuffers(fDisplay, fSurfaceAndroid);
-    }
+  if (fDisplay && fEGLContext && fSurfaceAndroid) {
+    eglSwapBuffers(fDisplay, fSurfaceAndroid);
+  }
 }
 
 }  // anonymous namespace
@@ -136,11 +148,12 @@ namespace window_context_factory {
 
 std::unique_ptr<WindowContext> MakeGLForAndroid(ANativeWindow* window,
                                                 const DisplayParams& params) {
-    std::unique_ptr<WindowContext> ctx(new GLWindowContext_android(window, params));
-    if (!ctx->isValid()) {
-        return nullptr;
-    }
-    return ctx;
+  std::unique_ptr<WindowContext> ctx(
+      new GLWindowContext_android(window, params));
+  if (!ctx->isValid()) {
+    return nullptr;
+  }
+  return ctx;
 }
 
 }  // namespace window_context_factory

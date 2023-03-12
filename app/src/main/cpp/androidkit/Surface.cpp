@@ -12,7 +12,6 @@
 #include "../DisplayParams.h"
 #include "../WindowContextFactory_android.h"
 
-
 WindowSurface::WindowSurface(ANativeWindow* win,
                              std::unique_ptr<WindowContext> wctx)
     : fWindow(win), fWindowContext(std::move(wctx)) {
@@ -226,7 +225,8 @@ static jlong Surface_GetNativeCanvas(JNIEnv* env, jclass clazz,
   return surface ? reinterpret_cast<jlong>(surface->getCanvas()) : 0;
 }
 
-static void Surface_FlushAndSubmit(JNIEnv* env, jclass clazz, jlong native_surface) {
+static void Surface_FlushAndSubmit(JNIEnv* env, jclass clazz,
+                                   jlong native_surface) {
   if (auto* surface = reinterpret_cast<Surface*>(native_surface)) {
     surface->flushAndSubmit();
   }
@@ -242,7 +242,8 @@ static jint Surface_GetHeight(JNIEnv* env, jclass clazz, jlong native_surface) {
   return surface ? surface->height() : 0;
 }
 
-static jlong Surface_MakeSnapshot(JNIEnv* env, jclass clazz, jlong native_surface) {
+static jlong Surface_MakeSnapshot(JNIEnv* env, jclass clazz,
+                                  jlong native_surface) {
   if (const auto* surface = reinterpret_cast<Surface*>(native_surface)) {
     auto snapshot = surface->makeImageSnapshot();
     return reinterpret_cast<jlong>(snapshot.release());

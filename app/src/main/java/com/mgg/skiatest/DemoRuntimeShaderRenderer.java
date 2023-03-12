@@ -35,12 +35,11 @@ class DemoRuntimeShaderRenderer extends SurfaceRenderer {
 
     @Override
     protected void onRenderFrame(Canvas canvas, long ms) {
-        final float kWidth  = 400,
+        final float kWidth  = 200,
                 kHeight = 200,
                 kSpeed  = 4;
 
         canvas.drawColor(0xffffffe0);
-
         Paint p = new Paint();
         p.setColor(new Color(95f,184f,120f,1.000f));
 

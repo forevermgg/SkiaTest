@@ -2,8 +2,8 @@
 
 #include <string>
 
-#include "exception/exception_helper.h"
 #include "DisplayParams.h"
+#include "exception/exception_helper.h"
 
 void might_throw() { throw std::runtime_error("A C++ runtime_error"); }
 
