@@ -30,8 +30,8 @@
         android:layout_height="200dp"
         android:background="@android:color/white"/>
 
-    <SurfaceView
-        android:id="@+id/mSurfaceView2"
+    <ImageView
+        android:id="@+id/mImageView"
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:background="@android:color/white"/>

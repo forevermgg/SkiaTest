@@ -17,6 +17,20 @@ add_library( # Sets the name of the library.
 
         # Sets the library as a shared library.
         SHARED
+        androidkit/Canvas.cpp
+        androidkit/ColorFilters.cpp
+        androidkit/Gradients.cpp
+        androidkit/Image.cpp
+        androidkit/ImageFilter.cpp
+        androidkit/Matrix.cpp
+        androidkit/Paint.cpp
+        androidkit/Path.cpp
+        androidkit/PathBuilder.cpp
+        androidkit/RuntimeShaderBuilder.cpp
+        androidkit/Shader.cpp
+        androidkit/Surface.cpp
+        androidkit/Surface.h
+        androidkit/Utils.cpp
         debug/android_debug.h
         commonpool/CommonPool.h
         commonpool/CommonPool.cc
