@@ -10,6 +10,68 @@
 #include <android/log.h>
 
 #include "../DisplayParams.h"
+#include "../WindowContextFactory_android.h"
+
+
+WindowSurface::WindowSurface(ANativeWindow* win,
+                             std::unique_ptr<WindowContext> wctx)
+    : fWindow(win), fWindowContext(std::move(wctx)) {
+  SkASSERT(fWindow);
+  SkASSERT(fWindowContext);
+
+  fSurface = fWindowContext->getBackbufferSurface();
+}
+
+void WindowSurface::release(JNIEnv* env) {
+  fWindowContext.reset();
+  ANativeWindow_release(fWindow);
+}
+
+SkCanvas* WindowSurface::getCanvas() {
+  if (fSurface) {
+    return fSurface->getCanvas();
+  }
+  return nullptr;
+}
+
+void WindowSurface::flushAndSubmit() {
+  fSurface->flushAndSubmit();
+  fWindowContext->swapBuffers();
+  fSurface = fWindowContext->getBackbufferSurface();
+}
+
+// SkSurface created from being passed an android.view.Surface
+// For now, assume we are always rendering with OpenGL
+// TODO: add option of choose backing
+ThreadedSurface::ThreadedSurface(JNIEnv* env, jobject surface)
+    : fThread(std::make_unique<SurfaceThread>()) {
+  ANativeWindow* window = ANativeWindow_fromSurface(env, surface);
+  fWidth = ANativeWindow_getWidth(window);
+  fHeight = ANativeWindow_getHeight(window);
+
+  Message message(kInitialize);
+  message.fNativeWindow = window;
+  message.fWindowSurface = &fWindowSurface;
+  fThread->postMessage(message);
+}
+
+void ThreadedSurface::release(JNIEnv* env) {
+  Message message(kDestroy);
+  message.fWindowSurface = &fWindowSurface;
+  fThread->postMessage(message);
+  fThread->release();
+}
+
+SkCanvas* ThreadedSurface::getCanvas() {
+  return fRecorder.beginRecording(fWidth, fHeight);
+}
+
+void ThreadedSurface::flushAndSubmit() {
+  Message message(kRenderPicture);
+  message.fWindowSurface = &fWindowSurface;
+  message.fPicture = fRecorder.finishRecordingAsPicture().release();
+  fThread->postMessage(message);
+}
 
 namespace {
 
@@ -105,6 +167,52 @@ static jlong Surface_CreateBitmap(JNIEnv* env, jclass clazz, jobject bitmap) {
   return reinterpret_cast<jlong>(new BitmapSurface(env, bitmap));
 }
 
+static jlong Surface_CreateThreadedSurface(JNIEnv* env, jclass clazz,
+                                           jobject surface) {
+  return reinterpret_cast<jlong>(new ThreadedSurface(env, surface));
+}
+
+static jlong Surface_CreateVK(JNIEnv* env, jclass clazz, jobject jsurface) {
+#ifdef SK_VULKAN
+  auto* win = ANativeWindow_fromSurface(env, jsurface);
+  if (!win) {
+    return 0;
+  }
+
+  // TODO: match window params?
+  sk_app::DisplayParams params;
+  auto winctx =
+      sk_app::window_context_factory::MakeVulkanForAndroid(win, params);
+  if (!winctx) {
+    return 0;
+  }
+
+  return reinterpret_cast<jlong>(
+      sk_make_sp<WindowSurface>(win, std::move(winctx)).release());
+#endif  // SK_VULKAN
+  return 0;
+}
+
+static jlong Surface_CreateGL(JNIEnv* env, jclass clazz, jobject jsurface) {
+#ifdef SK_GL
+  auto* win = ANativeWindow_fromSurface(env, jsurface);
+  if (!win) {
+    return 0;
+  }
+
+  // TODO: match window params?
+  DisplayParams params;
+  auto winctx = window_context_factory::MakeGLForAndroid(win, params);
+  if (!winctx) {
+    return 0;
+  }
+
+  return reinterpret_cast<jlong>(
+      sk_make_sp<WindowSurface>(win, std::move(winctx)).release());
+#endif  // SK_GL
+  return 0;
+}
+
 static void Surface_Release(JNIEnv* env, jclass clazz, jlong native_surface) {
   if (auto* surface = reinterpret_cast<Surface*>(native_surface)) {
     surface->release(env);
@@ -118,8 +226,7 @@ static jlong Surface_GetNativeCanvas(JNIEnv* env, jclass clazz,
   return surface ? reinterpret_cast<jlong>(surface->getCanvas()) : 0;
 }
 
-static void Surface_FlushAndSubmit(JNIEnv* env, jclass clazz,
-                                   jlong native_surface) {
+static void Surface_FlushAndSubmit(JNIEnv* env, jclass clazz, jlong native_surface) {
   if (auto* surface = reinterpret_cast<Surface*>(native_surface)) {
     surface->flushAndSubmit();
   }
@@ -135,12 +242,12 @@ static jint Surface_GetHeight(JNIEnv* env, jclass clazz, jlong native_surface) {
   return surface ? surface->height() : 0;
 }
 
-static jlong Surface_MakeSnapshot(JNIEnv* env, jclass clazz,
-                                  jlong native_surface) {
+static jlong Surface_MakeSnapshot(JNIEnv* env, jclass clazz, jlong native_surface) {
   if (const auto* surface = reinterpret_cast<Surface*>(native_surface)) {
     auto snapshot = surface->makeImageSnapshot();
     return reinterpret_cast<jlong>(snapshot.release());
   }
+
   return 0;
 }
 
@@ -152,6 +259,12 @@ int register_androidkit_Surface(JNIEnv* env) {
   static const JNINativeMethod methods[] = {
       {"nCreateBitmap", "(Landroid/graphics/Bitmap;)J",
        reinterpret_cast<void*>(Surface_CreateBitmap)},
+      {"nCreateThreadedSurface", "(Landroid/view/Surface;)J",
+       reinterpret_cast<void*>(Surface_CreateThreadedSurface)},
+      {"nCreateVKSurface", "(Landroid/view/Surface;)J",
+       reinterpret_cast<void*>(Surface_CreateVK)},
+      {"nCreateGLSurface", "(Landroid/view/Surface;)J",
+       reinterpret_cast<void*>(Surface_CreateGL)},
       {"nRelease", "(J)V", reinterpret_cast<void*>(Surface_Release)},
       {"nGetNativeCanvas", "(J)J",
        reinterpret_cast<void*>(Surface_GetNativeCanvas)},

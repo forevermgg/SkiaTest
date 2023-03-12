@@ -30,6 +30,8 @@ add_library( # Sets the name of the library.
         androidkit/Shader.cpp
         androidkit/Surface.cpp
         androidkit/Surface.h
+        androidkit/SurfaceThread.h
+        androidkit/SurfaceThread.cpp
         androidkit/Utils.cpp
         debug/android_debug.h
         commonpool/CommonPool.h
@@ -54,6 +56,9 @@ add_library( # Sets the name of the library.
         exception/exception_helper.cpp
         Frame.h
         Frame.cc
+        GLWindowContext.h
+        GLWindowContext.cc
+        GLWindowContext_android.cpp
         load_library.cc
         choreographer/NativeChoreographer.h
         choreographer/NativeChoreographer.cc
@@ -62,6 +67,9 @@ add_library( # Sets the name of the library.
         test/TestData.cc
         native-lib.cpp
         utils/Result.h
+        WindowContext.h
+        WindowContext.cc
+        WindowContextFactory_android.h
         )
 # add_library(mxnet STATIC IMPORTED)
 # set_property(TARGET mxnet PROPERTY IMPORTED_LOCATION /path/to/libmxnet.a)

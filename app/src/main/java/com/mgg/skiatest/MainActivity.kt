@@ -36,6 +36,8 @@ open class MainActivity : AppCompatActivity() {
         throwsException()
 
         testBitmap()
+
+        binding.mSurfaceView.holder.addCallback(AnimationRenderer())
     }
 
     private fun testData() {
@@ -85,6 +87,7 @@ open class MainActivity : AppCompatActivity() {
             canvas.concat(Matrix().scale(10f, 10f))
             canvas.drawImage(image, 20f, 0f, SamplingOptions.CATMULLROM())
         } catch (e: Exception) {
+            e.printStackTrace()
         }
         binding.mImageView.setImageBitmap(bmp)
     }
