@@ -37,7 +37,7 @@ open class MainActivity : AppCompatActivity() {
 
         testBitmap()
 
-        binding.mSurfaceView.holder.addCallback(AnimationRenderer())
+        binding.mSurfaceView.holder.addCallback(DemoRuntimeShaderRenderer())
     }
 
     private fun testData() {
