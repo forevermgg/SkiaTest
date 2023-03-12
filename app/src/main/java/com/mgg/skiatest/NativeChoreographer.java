@@ -9,7 +9,7 @@ import com.mgg.skiatest.java.impl.Stats;
 
 public class NativeChoreographer extends Managed implements Choreographer.FrameCallback {
 
-    private boolean useChoreographer = true;
+    private boolean useChoreographer = false;
     private NativeChoreographer(long ptr) {
         super(ptr, NativeChoreographer._FinalizerHolder.PTR);
     }

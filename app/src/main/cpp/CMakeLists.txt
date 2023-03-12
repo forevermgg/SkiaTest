@@ -40,9 +40,6 @@ add_library( # Sets the name of the library.
         exception/exception_helper.cpp
         Frame.h
         Frame.cc
-        GLWindowContext.h
-        GLWindowContext.cc
-        GLWindowContext_android.cpp
         load_library.cc
         choreographer/NativeChoreographer.h
         choreographer/NativeChoreographer.cc
@@ -51,8 +48,6 @@ add_library( # Sets the name of the library.
         test/TestData.cc
         native-lib.cpp
         utils/Result.h
-        WindowContext.h
-        WindowContext.cc
         )
 # add_library(mxnet STATIC IMPORTED)
 # set_property(TARGET mxnet PROPERTY IMPORTED_LOCATION /path/to/libmxnet.a)

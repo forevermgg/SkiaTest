@@ -13,7 +13,7 @@ class TestData {
   ~TestData();
 
  private:
-  std::unique_ptr<EglManager> eglManager;
+  // std::unique_ptr<EglManager> eglManager;
 };
 
 #endif  // SKIA_TEST_TESTDATA_H

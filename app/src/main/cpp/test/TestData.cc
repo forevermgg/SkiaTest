@@ -19,8 +19,8 @@
 #include "../utils/Timing.h"
 
 TestData::TestData() {
-  eglManager = std::make_unique<EglManager>();
-  eglManager->initialize();
+  // eglManager = std::make_unique<EglManager>();
+  // eglManager->initialize();
 
   // https://github.com/aosp-mirror/platform_frameworks_base/blob/60bcab93678eec400bbdaa53f1b7f3e3d9119165/libs/hwui/tests/unit/CommonPoolTests.cpp
   std::atomic_bool ran(false);
@@ -47,8 +47,8 @@ TestData::TestData() {
 }
 
 TestData::~TestData() {
-  eglManager->destroy();
-  eglManager = nullptr;
+  // eglManager->destroy();
+  // eglManager = nullptr;
 }
 
 static void finalize_mixed(jlong ptr) {
