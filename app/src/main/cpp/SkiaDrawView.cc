@@ -122,6 +122,17 @@ void Picture_cullRect(SkCanvas* canvas) {
   canvas->drawRect(picture->cullRect(), paint);
 }
 
+void Picture_playback(SkCanvas* canvas) {
+  SkPictureRecorder recorder;
+  SkCanvas* pictureCanvas = recorder.beginRecording({0, 0, 256, 256});
+  SkPaint paint;
+  pictureCanvas->drawRect(SkRect::MakeWH(200, 200), paint);
+  paint.setColor(SK_ColorWHITE);
+  pictureCanvas->drawRect(SkRect::MakeLTRB(20, 20, 180, 180), paint);
+  sk_sp<SkPicture> picture = recorder.finishRecordingAsPicture();
+  picture->playback(canvas);
+}
+
 extern "C" JNIEXPORT void JNICALL
 Java_com_mgg_skiatest_SkiaDrawView_drawIntoBitmap(JNIEnv* env, jobject thiz,
                                                   jobject dstBitmap,
@@ -157,6 +168,7 @@ Java_com_mgg_skiatest_SkiaDrawView_drawIntoBitmap(JNIEnv* env, jobject thiz,
   // Canvas_drawPicture_4(canvas);
   // Image_MakeFromPicture(canvas);
   // Picture_008(canvas);
-  Picture_cullRect(canvas);
+  // Picture_cullRect(canvas);
+  Picture_playback(canvas);
   AndroidBitmap_unlockPixels(env, dstBitmap);
 }
