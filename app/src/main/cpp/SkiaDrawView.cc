@@ -133,6 +133,41 @@ void Picture_playback(SkCanvas* canvas) {
   picture->playback(canvas);
 }
 
+void f16to8888busted(SkCanvas* canvas) {
+  // Create the linear-rgb color space and the image info
+  sk_sp<SkColorSpace> colorSpace = SkColorSpace::MakeSRGBLinear();
+  SkImageInfo info =
+      SkImageInfo::Make(100, 100, SkColorType::kRGBA_F16_SkColorType,
+                        SkAlphaType::kPremul_SkAlphaType, colorSpace);
+
+  // If we rendered offscreen, snap an image and push the results to the
+  // window's canvas
+  sk_sp<SkSurface> offscreen = SkSurface::MakeRaster(info);
+  SkPaint paint;
+  offscreen->getCanvas()->drawRect(SkRect::MakeXYWH(0, 0, 150, 150), paint);
+
+  // Take a snapshot from surface and draw it on the canvas
+  // We made/have an off-screen surface. Get the contents as an SkImage:
+  sk_sp<SkImage> img = offscreen->makeImageSnapshot();
+  canvas->drawImageRect(img, SkRect::MakeWH(100, 100), SkSamplingOptions());
+}
+
+sk_sp<SkPicture> make_pic(const std::function<void(SkCanvas*)>& drawer) {
+    SkPictureRecorder rec;
+    drawer(rec.beginRecording(128, 128));
+    return rec.finishRecordingAsPicture();
+}
+
+void serial_procs_picture(SkCanvas* canvas) {
+    auto p1 = make_pic([](SkCanvas* c) {
+        // need to be large enough that drawPictures doesn't "unroll" us
+        for (int i = 0; i < 20; ++i) {
+            c->drawColor(SK_ColorRED);
+        }
+    });
+    canvas->drawPicture(p1);
+}
+
 extern "C" JNIEXPORT void JNICALL
 Java_com_mgg_skiatest_SkiaDrawView_drawIntoBitmap(JNIEnv* env, jobject thiz,
                                                   jobject dstBitmap,
@@ -157,18 +192,48 @@ Java_com_mgg_skiatest_SkiaDrawView_drawIntoBitmap(JNIEnv* env, jobject thiz,
   paint.setColor(0xFF0000FF);
   paint.setStrokeWidth(SkIntToScalar(2));
 
-  for (int i = 0; i < 100; i++) {
+  SkPaint greenPaint;
+  greenPaint.setColor(0xff008000);
+  SkPaint blackPaint;
+  blackPaint.setColor(0xff000000);
+  SkPaint whitePaint;
+  whitePaint.setColor(0xffffffff);
+  SkPaint layerPaint;
+  layerPaint.setColor(0xff000000);
+
+  auto surf = SkSurface::MakeRasterN32Premul(100, 100);
+  surf->getCanvas()->clear(0xffffffff);
+  SkPaint circlePaint;
+  circlePaint.setColor(0xff000000);
+  surf->getCanvas()->drawCircle(50, 50, 50, circlePaint);
+  sk_sp<SkImage> fCircleImage;
+  fCircleImage = surf->makeImageSnapshot();
+  canvas->drawImageRect(fCircleImage, SkRect::MakeXYWH(20, 20, 60, 60),
+                        SkSamplingOptions(), &greenPaint);
+
+  SkRect canvasRect(SkRect::MakeWH(SkIntToScalar(100), SkIntToScalar(100)));
+  canvas->saveLayer(nullptr, &blackPaint);
+  canvas->drawRect(canvasRect, greenPaint);
+  canvas->saveLayer(nullptr, &layerPaint);
+  canvas->drawImageRect(fCircleImage, SkRect::MakeXYWH(20, 20, 60, 60),
+                        SkSamplingOptions(), &blackPaint);
+  canvas->restore();
+  canvas->restore();
+
+  /*for (int i = 0; i < 100; i++) {
     float x = (float)i / 99.0f;
     float offset = elapsedTime / 1000.0f;
     canvas->drawLine(sin(x * M_PI + offset) * 800.0f, 0,
                      cos(x * M_PI + offset) * 800.0f, 800, paint);
-  }
+  }*/
   // Canvas_drawPicture_2(canvas);
   // Canvas_drawPicture_3(canvas);
   // Canvas_drawPicture_4(canvas);
   // Image_MakeFromPicture(canvas);
   // Picture_008(canvas);
   // Picture_cullRect(canvas);
-  Picture_playback(canvas);
+  // Picture_playback(canvas);
+  // f16to8888busted(canvas);
+    serial_procs_picture(canvas);
   AndroidBitmap_unlockPixels(env, dstBitmap);
 }
