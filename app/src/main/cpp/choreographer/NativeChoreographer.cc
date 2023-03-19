@@ -28,9 +28,21 @@ static int GetAPILevel() {
   }
 }
 
-// Declaration for native chreographer API.
-struct AChoreographer;
-typedef void (*AChoreographer_frameCallback)(long frameTimeNanos, void *data);
+// Only avialalbe on API 24+
+typedef void AChoreographer;
+// Only available on API 29+ or API 24+ if the architecture is 64-bit.
+typedef void (*AChoreographer_frameCallback)(long frameTimeNanos,
+                                             void* data);
+// Only avialalbe on API 24+
+typedef AChoreographer* (*AChoreographer_getInstance_FPN)();
+typedef void (*AChoreographer_postFrameCallback_FPN)(
+        AChoreographer* choreographer,
+        AChoreographer_frameCallback callback,
+        void* data);
+static AChoreographer_getInstance_FPN AChoreographer_getInstance;
+static AChoreographer_postFrameCallback_FPN AChoreographer_postFrameCallback;
+
+
 typedef AChoreographer *(*func_AChoreographer_getInstance)();
 typedef void (*func_AChoreographer_postFrameCallback)(
     AChoreographer *choreographer, AChoreographer_frameCallback callback,

@@ -67,6 +67,7 @@ add_library( # Sets the name of the library.
         test/TestData.cc
         native-lib.cpp
         utils/Result.h
+        VsyncWaiter.cc
         WindowContext.h
         WindowContext.cc
         WindowContextFactory_android.h

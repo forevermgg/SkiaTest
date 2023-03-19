@@ -1,7 +1,10 @@
 package com.mgg.skiatest
 
 import android.annotation.TargetApi
+import android.content.Context
 import android.graphics.Bitmap
+import android.hardware.display.DisplayManager
+import android.os.Build
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +20,7 @@ open class MainActivity : AppCompatActivity() {
     private var testData: TestData ? = null
     private var nativeChoreographer: NativeChoreographer ? = null
     private var fAnimationTimer: Timer? = null
+    private var waiter: VsyncWaiter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +42,17 @@ open class MainActivity : AppCompatActivity() {
         testBitmap()
 
         binding.mSurfaceView.holder.addCallback(DemoRuntimeShaderRenderer())
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 /* 17 */) {
+            val dm: DisplayManager = getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
+            waiter = VsyncWaiter.getInstance(dm)
+        } else {
+            val fps = (getSystemService(Context.WINDOW_SERVICE) as WindowManager)
+                .defaultDisplay
+                .refreshRate
+            waiter = VsyncWaiter.getInstance(fps)
+        }
+        waiter?.init()
     }
 
     private fun testData() {
@@ -96,6 +111,7 @@ open class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         nativeChoreographer?.onResume()
+        waiter?.onVsync(0, 0, 0)
     }
 
     override fun onPause() {
