@@ -145,7 +145,7 @@ void f16to8888busted(SkCanvas* canvas) {
   sk_sp<SkSurface> offscreen = SkSurface::MakeRaster(info);
   SkPaint paint;
   offscreen->getCanvas()->drawRect(SkRect::MakeXYWH(0, 0, 150, 150), paint);
-
+  
   // Take a snapshot from surface and draw it on the canvas
   // We made/have an off-screen surface. Get the contents as an SkImage:
   sk_sp<SkImage> img = offscreen->makeImageSnapshot();

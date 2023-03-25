@@ -585,7 +585,6 @@ void EglManager::damageFrame(const Frame& frame, const SkRect& dirty) {
   if (EglExtensions.setDamage && mSwapBehavior == SwapBehavior::BufferAge) {
     EGLint rects[4];
     frame.map(dirty, rects);
-    // TODO(forevermeng)
     // if (!eglSetDamageRegionKHR(mEglDisplay, frame.mSurface, rects, 1)) {
     // LOGF("Failed to set damage region on surface %p, error=%s",
     //     (void*)frame.mSurface, eglErrorString());

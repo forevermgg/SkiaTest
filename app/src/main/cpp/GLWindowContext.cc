@@ -62,7 +62,6 @@ void GLWindowContext::destroyContext() {
 }
 sk_sp<SkSurface> GLWindowContext::getBackbufferSurface() {
   if (nullptr == fSurface) {
-    // TODO(forevermeng)
     if (fContext) {
       GrGLenum format = kUnknown_SkColorType;
       const SkColorType color_type =
@@ -91,8 +90,6 @@ sk_sp<SkSurface> GLWindowContext::getBackbufferSurface() {
           &surface_props                                 // surface properties
       );
     }
-
-    // TODO(forevermeng)
     /*if (fContext) {
       GrGLint buffer;
       fBackendContext.get()->fFunctions.fGetIntegerv(GR_GL_FRAMEBUFFER_BINDING,

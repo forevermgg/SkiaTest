@@ -95,7 +95,7 @@ open class MainActivity : AppCompatActivity() {
 
         val snapshot: Image = bitmapSurface.makeImageSnapshot()
         canvas.drawImage(snapshot, 0f, 200f)
-
+        // canvas.drawColor()
         try {
             val image: Image = Image.fromStream(resources.openRawResource(R.raw.brickwork_texture))
             // TODO: Canvas.scale

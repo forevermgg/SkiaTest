@@ -105,8 +105,6 @@ sk_sp<const GrGLInterface> GLWindowContext_android::onInitializeContext() {
       eglMakeCurrent(fDisplay, fSurfaceAndroid, fSurfaceAndroid, fEGLContext));
   // GLWindowContext::initializeContext will call GrGLMakeNativeInterface so we
   // won't call it here.
-
-  // TODO(forevermeng)
   /*glClearStencil(0);
   glClearColor(95, 184, 120, 1.000);
   glStencilMask(0xFFDC143C);*/
