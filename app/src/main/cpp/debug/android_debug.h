@@ -1,7 +1,6 @@
 #ifndef __SAMPLE_ANDROID_DEBUG_H__
 #define __SAMPLE_ANDROID_DEBUG_H__
-#include "../../../../../../../Library/Android/sdk/ndk/25.1.8937393/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/include/android/log.h"
-
+#include <android/log.h>
 #if 1
 #ifndef MODULE_NAME
 #define MODULE_NAME "OpenGL-Wide-Color"
