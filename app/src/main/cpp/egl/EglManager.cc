@@ -8,7 +8,7 @@
 
 #include <unordered_set>
 #include <vector>
-
+#include <string>
 #include "../debug/android_debug.h"
 
 class unordered_string_set : public std::unordered_set<std::string> {

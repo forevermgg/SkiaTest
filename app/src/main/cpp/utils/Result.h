@@ -1,3 +1,5 @@
+#include <variant>
+
 template <typename E>
 struct Error {
   E error;
