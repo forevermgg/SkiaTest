@@ -53,6 +53,8 @@ open class MainActivity : AppCompatActivity() {
             waiter = VsyncWaiter.getInstance(fps)
         }
         waiter?.init()
+
+        Log.error("isAlphaSizeSupported:${MyGLRenderer().isAlphaSizeSupported}")
     }
 
     private fun testData() {
