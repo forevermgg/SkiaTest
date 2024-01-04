@@ -4,6 +4,7 @@ import android.annotation.TargetApi
 import android.content.Context
 import android.graphics.Bitmap
 import android.hardware.display.DisplayManager
+import android.opengl.GLES20
 import android.os.Build
 import android.os.Bundle
 import android.view.*
@@ -55,6 +56,19 @@ open class MainActivity : AppCompatActivity() {
         waiter?.init()
 
         Log.error("isAlphaSizeSupported:${MyGLRenderer().isAlphaSizeSupported}")
+        var isAlphaSupported = false
+
+        val alphaSize = IntArray(1)
+        GLES20.glGetIntegerv(GLES20.GL_ALPHA_BITS, alphaSize, 0)
+
+        isAlphaSupported = if (alphaSize[0] > 0) {
+            // 支持 alpha 通道
+            true
+        } else {
+            // 不支持 alpha 通道
+            false
+        }
+        Log.error("isAlphaSupported:${isAlphaSupported}")
     }
 
     private fun testData() {
