@@ -4,6 +4,7 @@ import android.annotation.TargetApi
 import android.content.Context
 import android.graphics.Bitmap
 import android.hardware.display.DisplayManager
+import android.opengl.GLES20
 import android.os.Build
 import android.os.Bundle
 import android.view.*
@@ -20,7 +21,7 @@ open class MainActivity : AppCompatActivity() {
     private var testData: TestData ? = null
     private var nativeChoreographer: NativeChoreographer ? = null
     private var fAnimationTimer: Timer? = null
-    // private var waiter: VsyncWaiter? = null
+    private var waiter: VsyncWaiter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +44,7 @@ open class MainActivity : AppCompatActivity() {
 
         binding.mSurfaceView.holder.addCallback(DemoRuntimeShaderRenderer())
 
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 *//* 17 *//*) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 /* 17 */) {
             val dm: DisplayManager = getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
             waiter = VsyncWaiter.getInstance(dm)
         } else {
@@ -52,12 +53,27 @@ open class MainActivity : AppCompatActivity() {
                 .refreshRate
             waiter = VsyncWaiter.getInstance(fps)
         }
-        waiter?.init()*/
+        waiter?.init()
+
+        Log.error("isAlphaSizeSupported:${MyGLRenderer().isAlphaSizeSupported}")
+        var isAlphaSupported = false
+
+        val alphaSize = IntArray(1)
+        GLES20.glGetIntegerv(GLES20.GL_ALPHA_BITS, alphaSize, 0)
+
+        isAlphaSupported = if (alphaSize[0] > 0) {
+            // 支持 alpha 通道
+            true
+        } else {
+            // 不支持 alpha 通道
+            false
+        }
+        Log.error("isAlphaSupported:${isAlphaSupported}")
     }
 
     private fun testData() {
         testData = TestData.makeEmpty()
-        // nativeChoreographer = NativeChoreographer.makeEmpty()
+        nativeChoreographer = NativeChoreographer.makeEmpty()
         val test = CheckEglEnvironment.makeEmpty()
         test.checkSupportEgl()
         test.checkSupportGLExtensions()
