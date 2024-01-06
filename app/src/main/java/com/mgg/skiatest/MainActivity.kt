@@ -20,7 +20,7 @@ open class MainActivity : AppCompatActivity() {
     private var testData: TestData ? = null
     private var nativeChoreographer: NativeChoreographer ? = null
     private var fAnimationTimer: Timer? = null
-    private var waiter: VsyncWaiter? = null
+    // private var waiter: VsyncWaiter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +43,7 @@ open class MainActivity : AppCompatActivity() {
 
         binding.mSurfaceView.holder.addCallback(DemoRuntimeShaderRenderer())
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 /* 17 */) {
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 *//* 17 *//*) {
             val dm: DisplayManager = getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
             waiter = VsyncWaiter.getInstance(dm)
         } else {
@@ -52,12 +52,12 @@ open class MainActivity : AppCompatActivity() {
                 .refreshRate
             waiter = VsyncWaiter.getInstance(fps)
         }
-        waiter?.init()
+        waiter?.init()*/
     }
 
     private fun testData() {
         testData = TestData.makeEmpty()
-        nativeChoreographer = NativeChoreographer.makeEmpty()
+        // nativeChoreographer = NativeChoreographer.makeEmpty()
         val test = CheckEglEnvironment.makeEmpty()
         test.checkSupportEgl()
         test.checkSupportGLExtensions()
@@ -110,13 +110,13 @@ open class MainActivity : AppCompatActivity() {
     @TargetApi(19)
     override fun onResume() {
         super.onResume()
-        nativeChoreographer?.onResume()
-        waiter?.onVsync(0, 0, 0)
+        // nativeChoreographer?.onResume()
+        // waiter?.onVsync(0, 0, 0)
     }
 
     override fun onPause() {
         super.onPause()
-        nativeChoreographer?.onPause()
+        // nativeChoreographer?.onPause()
     }
 
     override fun onDestroy() {
