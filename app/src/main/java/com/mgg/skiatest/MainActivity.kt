@@ -69,19 +69,6 @@ open class MainActivity : AppCompatActivity() {
             false
         }
         Log.error("isAlphaSupported:${isAlphaSupported}")
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val surfaceHolder = binding.mSurfaceControlSurfaceView.holder
-            val surface = surfaceHolder.surface
-            val builder = SurfaceControl.Builder()
-
-            val surfaceControl = binding.mSurfaceControlSurfaceView.surfaceControl
-            val surfaceControlTransaction = SurfaceControl.Transaction()
-            // surfaceControlTransaction.setAlpha(surfaceControl, 1.0f)
-            // surfaceControlTransaction.setVisibility(surfaceControl, true)
-            surfaceControlTransaction.apply()
-
-        }
     }
 
     private fun testData() {
